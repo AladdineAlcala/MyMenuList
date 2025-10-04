@@ -68,7 +68,7 @@ fun SplashScreen(
     ) {
         // The Icon's alpha is tied to our animation state.
         Icon(
-            painter = painterResource(id = R.drawable.ic_launcher_background), // Your app's logo
+            painter = painterResource(id = R.drawable.claude), // Your app's logo
             contentDescription = "App Logo",
             modifier = Modifier
                 .size(120.dp)
