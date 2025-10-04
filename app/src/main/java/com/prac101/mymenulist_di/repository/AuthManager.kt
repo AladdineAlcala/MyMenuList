@@ -35,8 +35,8 @@ class AuthManager @Inject constructor(
 
     fun clearTokens() {
         prefs.edit {
-            Os.remove(KEY_ACCESS_TOKEN)
-            Os.remove(KEY_REFRESH_TOKEN)
+            remove(KEY_ACCESS_TOKEN)
+            remove(KEY_REFRESH_TOKEN)
         }
     }
 }
