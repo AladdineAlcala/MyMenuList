@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.prac101.mymenulist_di.screens.HomeScreen
 import com.prac101.mymenulist_di.screens.LogInScreen
+import com.prac101.mymenulist_di.screens.RegisterScreen
 import com.prac101.mymenulist_di.ui.theme.MyMenuList_DITheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,6 +50,18 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home") {
                             HomeScreen()
+                        }
+                        composable("signup") {
+                            RegisterScreen(
+                                onRegisterSuccess = {
+                                    navController.navigate("login") {
+                                        popUpTo("signup") { inclusive = true }
+                                    }
+                                },
+                                onNavigateToLogin = {
+                                    navController.navigate("login")
+                                }
+                            )
                         }
                     }
                 }
