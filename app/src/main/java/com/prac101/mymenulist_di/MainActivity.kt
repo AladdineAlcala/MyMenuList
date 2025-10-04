@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.prac101.mymenulist_di.screens.HomeScreen
 import com.prac101.mymenulist_di.screens.LogInScreen
+import com.prac101.mymenulist_di.screens.ProfileScreen
 import com.prac101.mymenulist_di.screens.RegisterScreen
 import com.prac101.mymenulist_di.ui.theme.MyMenuList_DITheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,6 +72,14 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("login")
                                 }
                             )
+                        }
+                        composable("profile") {
+                             ProfileScreen(
+                                 onBack = {
+                                     navController.navigate("home")
+                                 }
+                             )
+
                         }
                     }
                 }
