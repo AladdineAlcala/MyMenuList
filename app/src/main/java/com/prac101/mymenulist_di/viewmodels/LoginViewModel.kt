@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prac101.mymenulist_di.dto.LoginRequest
 import com.prac101.mymenulist_di.dto.LoginResponse
+import com.prac101.mymenulist_di.common.Result
 import com.prac101.mymenulist_di.repository.LoginRepository
-import com.prac101.mymenulist_di.repository.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

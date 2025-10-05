@@ -8,21 +8,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.prac101.mymenulist_di.screens.HomeScreen
 import com.prac101.mymenulist_di.screens.LogInScreen
 import com.prac101.mymenulist_di.screens.ProfileScreen
 import com.prac101.mymenulist_di.screens.RegisterScreen
+import com.prac101.mymenulist_di.screens.RegisterSuccessScreen
 import com.prac101.mymenulist_di.screens.SplashScreen
 import com.prac101.mymenulist_di.ui.theme.MyMenuList_DITheme
 import com.prac101.mymenulist_di.viewmodels.HomeViewModel
 import com.prac101.mymenulist_di.viewmodels.MainViewModel
+import com.prac101.mymenulist_di.viewmodels.RegisterSuccessViewModel
 import com.prac101.mymenulist_di.viewmodels.StartDestination
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,7 +45,6 @@ class MainActivity : ComponentActivity() {
                     AppNavigation()
                 }
             }
-
         }
     }
 }
@@ -48,7 +52,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(
     mainViewModel: MainViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
+    registerSuccessViewModel: RegisterSuccessViewModel = viewModel()
     ){
     val navController = rememberNavController()
     val startDestination by mainViewModel.startDestination.collectAsState()
@@ -70,7 +75,7 @@ fun AppNavigation(
                     }
                 },
                 onNavigateToSignUp = {
-                    navController.navigate("signup") // Navigate to the profile
+                    navController.navigate("register") // Navigate to the profile
                 },
                 onForgotPassword = {
                     // Handle forgot password
@@ -78,7 +83,6 @@ fun AppNavigation(
             )
         }
         composable("home") {
-           // val homeViewModel:HomeViewModel=viewModel()
             HomeScreen(
                 onLogout = {
                     // Clear the tokens and navigate to the login screen
@@ -92,15 +96,16 @@ fun AppNavigation(
                 }
             )
         }
-        composable("signup") {
+        composable("register") {
             RegisterScreen(
-                onRegisterSuccess = {
-                    navController.navigate("login") {
-                        popUpTo("signup") { inclusive = true }
-                    }
+                onRegisterSuccess = { userEmail ->
+                    navController.navigate("registerSuccess/$userEmail")
                 },
                 onNavigateToLogin = {
-                    navController.navigate("login")
+                    navController.navigate("login"){
+                        popUpTo("login") { inclusive = true }
+
+                    }
                 }
             )
         }
@@ -111,6 +116,42 @@ fun AppNavigation(
                 }
             )
 
+        }
+        composable(
+            "registerSuccess/{email}",
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: "No email provided"
+            // Collect the 'isVerified' state as a Compose State object
+            val isVerified by registerSuccessViewModel.isVerified.collectAsState()
+
+            // This effect starts the background polling process
+            LaunchedEffect(Unit) {
+                registerSuccessViewModel.startPollingForVerification(email)
+            }
+
+
+            // This effect handles the automatic navigation once verification is successful
+            LaunchedEffect(isVerified) {
+                if (isVerified) {
+                    // Optional: A small delay so the user sees the button enable before navigating
+                    kotlinx.coroutines.delay(500)
+                    // Navigate to login...
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            }
+
+            RegisterSuccessScreen(
+                email = email,
+                isVerified = isVerified,
+                onNavigateToLogin = {
+                    navController.navigate("login"){
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

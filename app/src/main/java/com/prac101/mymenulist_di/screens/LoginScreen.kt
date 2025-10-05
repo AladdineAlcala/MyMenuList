@@ -52,7 +52,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.prac101.mymenulist_di.R
 import com.prac101.mymenulist_di.viewmodels.LoginViewModel
-import com.prac101.mymenulist_di.repository.Result
+import com.prac101.mymenulist_di.common.Result
+import com.prac101.mymenulist_di.dto.LoginResponse
 
 @Composable
 fun LogInScreen(

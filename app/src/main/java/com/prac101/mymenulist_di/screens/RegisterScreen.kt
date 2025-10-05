@@ -28,6 +28,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,14 +46,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.prac101.mymenulist_di.viewmodels.RegisterViewModel
+import com.prac101.mymenulist_di.common.Result
 
 @Composable
 fun RegisterScreen(
-    onRegisterSuccess: () -> Unit = {},
+    onRegisterSuccess: (userEmail: String) -> Unit,
     onNavigateToLogin: () -> Unit = {}
 ) {
     // You would create a RegisterViewModel for this screen's logic
-    // val viewModel: RegisterViewModel = hiltViewModel()
+    val viewModel: RegisterViewModel = hiltViewModel()
     val context = LocalContext.current
 
     // State for UI elements
@@ -62,15 +67,14 @@ fun RegisterScreen(
 
     // Mock state from a potential ViewModel
     val isLoading by remember { mutableStateOf(false) }
-    // val registerState by viewModel.registerState.collectAsState()
+     val registerState by viewModel.registerState.collectAsState()
 
-    /*
     // Handle registration result side effects
     LaunchedEffect(registerState) {
         when (val state = registerState) {
             is Result.Success -> {
                 showToast(context, "Registration Successful!")
-                onRegisterSuccess()
+                onRegisterSuccess(email)
             }
             is Result.Error -> {
                 showToast(context, state.message)
@@ -78,7 +82,6 @@ fun RegisterScreen(
             else -> {} // Handle Idle state
         }
     }
-    */
 
     Card(
     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -108,7 +111,6 @@ fun RegisterScreen(
             )
 
             Spacer(modifier = Modifier.height(32.dp))
-
             // --- 1. Username, Email, Password Fields ---
 
             // Username Field
@@ -158,8 +160,7 @@ fun RegisterScreen(
                     // --- 2. Validation Feature ---
                     if (validateRegistrationInput(context, username, email, password)) {
                         // This is where you would call your ViewModel
-                        // viewModel.register(username, email, password)
-                        showToast(context, "Registration logic goes here...")
+                         viewModel.register(username, email, password)
                     }
                 },
                 enabled = !isLoading,
