@@ -3,6 +3,7 @@ package com.prac101.mymenulist_di.repository
 import com.prac101.mymenulist_di.dto.LoginRequest
 import com.prac101.mymenulist_di.dto.LoginResponse
 import com.prac101.mymenulist_di.remote.ApiService
+import com.prac101.mymenulist_di.common.Result
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,11 +13,7 @@ import javax.inject.Singleton
 
 
 // Using a sealed class for more structured state management
-sealed class Result<out T> {
-    data object Idle : Result<Nothing>()
-    data class Success<out T>(val data: T) : Result<T>()
-    data class Error<T>(val message: String) : Result<T>()
-}
+
 
 @Singleton
 class LoginRepository @Inject constructor(
